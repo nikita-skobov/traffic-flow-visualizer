@@ -83,7 +83,7 @@ pipeline {
 
   post {
     always {
-      sh "node runReport.js --current-commit ${env.GIT_COMMIT} --stages Setup,${SETUP_END},Test,${TEST_END},Building,${BUILDING_END} --num-commits ${NUMBER_OF_COMMITS} --branch ${env.GIT_BRANCH} --build-start ${currentBuild.startTimeInMillis} --build-duration ${currentBuild.duration} --coverage-path ui/coverage/clover.xml --build-status ${currentBuild.result} > latest.json"
+      sh "cd ui/ && node runReport.js --current-commit ${env.GIT_COMMIT} --stages Setup,${SETUP_END},Test,${TEST_END},Building,${BUILDING_END} --num-commits ${NUMBER_OF_COMMITS} --branch ${env.GIT_BRANCH} --build-start ${currentBuild.startTimeInMillis} --build-duration ${currentBuild.duration} --coverage-path coverage/clover.xml --build-status ${currentBuild.result} > ../latest.json"
       sh "bash ./scripts/sendReport.sh --report-bucket ${REPORT_BUCKET_PRODUCTION} --project-name ${env.JOB_NAME}"
     }
     success {
