@@ -43,6 +43,20 @@ pub fn get_ws_count() -> i32 {
   wscount
 }
 
+pub fn broadcast(msg: &str) {
+    let wscount = get_ws_count();
+    if wscount > -1 {
+      let mut wsout = WSOUT.lock().unwrap();
+      match *wsout {
+        Some(ref x) => {
+          x.broadcast(msg);
+        },
+        None => {},
+      }
+      std::mem::drop(wsout);
+    }
+}
+
 fn ws_count(method: WsCountMethod) -> Option<i32> {
   match method {
     WsCountMethod::Get => {

@@ -93,8 +93,7 @@ fn handle_icmpv6_packet(interface_name: &str, source: IpAddr, destination: IpAdd
 fn handle_tcp_packet(interface_name: &str, source: IpAddr, destination: IpAddr, packet: &[u8]) {
     let tcp = TcpPacket::new(packet);
     if let Some(tcp) = tcp {
-        // ARRAY.lock().unwrap().push_str(&source.to_string()[..]);
-        // ARRAY.lock().unwrap().push_str("\n");
+        websocket::broadcast(&destination.to_string()[..]);
         println!(
             "[{}]: TCP Packet: {}:{} > {}:{}; length: {}, seq: {}, flags: {}",
             interface_name,
