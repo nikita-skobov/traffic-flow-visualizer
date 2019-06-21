@@ -31,7 +31,7 @@ pipeline {
 
                 NUMBER_OF_COMMITS = sh(script: 'git log ${GIT_PREVIOUS_COMMIT}..${GITCOMMIT} --pretty=oneline | wc -l', returnStdout: true).trim()
                 echo "number of commits: ${NUMBER_OF_COMMITS}"
-                NODE_MODULES_EXISTS = sh(script: "[ -d ./node_modules/ ]", returnStatus: true)
+                NODE_MODULES_EXISTS = sh(script: "[ -d ./ui/node_modules/ ]", returnStatus: true)
                 echo "previous commit: ${env.GIT_PREVIOUS_COMMIT}"
                 echo "current commit: ${env.GIT_COMMIT}"
                 PACKAGE_WAS_CHANGED = sh(script:'echo $(git diff --name-only ${GIT_PREVIOUS_COMMIT} ${GIT_COMMIT}) | grep --quiet "package.json"', returnStatus: true)
