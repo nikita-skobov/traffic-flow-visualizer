@@ -43,7 +43,7 @@ pub fn get_ws_count() -> i32 {
   wscount
 }
 
-pub fn broadcast(msg: &str) {
+pub fn broadcast(msg: &[u8]) {
     let wscount = get_ws_count();
     if wscount > -1 {
       let mut wsout = WSOUT.lock().unwrap();
