@@ -34,9 +34,9 @@ pipeline {
                 echo "current commit: ${env.GIT_COMMIT}"
                 PACKAGE_WAS_CHANGED = sh(script:'echo $(git diff --name-only ${GIT_PREVIOUS_COMMIT} ${GIT_COMMIT}) | grep --quiet "package.json"', returnStatus: true)
                 echo "package was changed? ${PACKAGE_WAS_CHANGED}"
-                SRC_WAS_CHANGED = sh(script:'echo $(git diff --name-only ${GIT_PREVIOUS_COMMIT} ${GIT_COMMIT}) | grep --quiet "src/*"', returnStatus: true)
+                SRC_WAS_CHANGED = sh(script:'echo $(git diff --name-only ${GIT_PREVIOUS_COMMIT} ${GIT_COMMIT}) | grep --quiet "ui/src/*"', returnStatus: true)
                 echo "src was changed? ${SRC_WAS_CHANGED}"
-                PUBLIC_WAS_CHANGED = sh(script:'echo $(git diff --name-only ${GIT_PREVIOUS_COMMIT} ${GIT_COMMIT}) | grep --quiet "public/*"', returnStatus: true)
+                PUBLIC_WAS_CHANGED = sh(script:'echo $(git diff --name-only ${GIT_PREVIOUS_COMMIT} ${GIT_COMMIT}) | grep --quiet "ui/public/*"', returnStatus: true)
                 echo "public was changed? ${PUBLIC_WAS_CHANGED}"
 
 
@@ -85,7 +85,7 @@ pipeline {
   post {
     always {
       sh "cd ui/ && node runReport.js --current-commit ${env.GIT_COMMIT} --stages Setup,${SETUP_END},Test,${TEST_END},Building,${BUILDING_END} --num-commits ${NUMBER_OF_COMMITS} --branch ${env.GIT_BRANCH} --build-start ${currentBuild.startTimeInMillis} --build-duration ${currentBuild.duration} --coverage-path coverage/clover.xml --build-status ${currentBuild.result} > ../latest.json"
-      sh "bash ./scripts/sendReport.sh --report-bucket ${REPORT_BUCKET_PRODUCTION} --project-name ${env.JOB_NAME}"
+      sh "bash ./scripts/sendReport.sh --report-bucket ${REPORT_BUCKET} --project-name ${env.JOB_NAME}"
     }
     success {
       echo 'Nice!!!'
