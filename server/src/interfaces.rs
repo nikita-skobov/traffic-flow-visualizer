@@ -56,7 +56,7 @@ pub fn pick_interface(interfaces: Vec<NetworkInterface>) -> NetworkInterface {
         input_number_str = input_number_str.trim().to_string();
         input_number = match input_number_str.parse::<i32>() {
             Ok(i) => {
-                if (input_number < min_interface_index || input_number > max_interface_index) {
+                if input_number < min_interface_index || input_number > max_interface_index {
                     println!(
                         "Please pick a number between {} and {}\n",
                         min_interface_index, max_interface_index

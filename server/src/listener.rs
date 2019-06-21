@@ -1,6 +1,3 @@
-#![feature(proc_macro_hygiene, decl_macro)]
-extern crate pnet;
-
 use pnet::datalink::{self, NetworkInterface};
 
 use pnet::packet::arp::ArpPacket;
@@ -15,12 +12,7 @@ use pnet::packet::udp::UdpPacket;
 use pnet::packet::Packet;
 use pnet::util::MacAddr;
 
-use std::env;
-use std::thread;
-use std::sync::Mutex;
-use std::io::{self, Write};
 use std::net::IpAddr;
-use std::process;
 
 fn handle_udp_packet(interface_name: &str, source: IpAddr, destination: IpAddr, packet: &[u8]) {
     let udp = UdpPacket::new(packet);

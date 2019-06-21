@@ -1,9 +1,6 @@
 use std::thread;
 use std::sync::Mutex;
-use std::time::Duration;
 
-
-use pnet::datalink;
 
 mod interfaces;
 mod websocket;

@@ -1,5 +1,4 @@
 use ws::{listen, Handler, Sender, Result, Handshake, CloseCode, Error, Message};
-use std::sync::Mutex;
 
 use super::WSOUT;
 
@@ -11,12 +10,12 @@ static mut WS_COUNT: i32 = -1;
 
 impl Handler for Server {
   fn on_open(&mut self, _: Handshake) -> Result<()> {
-    ws_count(WS_COUNT_METHOD::Increment);
+    ws_count(WsCountMethod::Increment);
     Ok(())
   }
 
   fn on_close(&mut self, code: CloseCode, reason: &str) {
-    ws_count(WS_COUNT_METHOD::Decrement);
+    ws_count(WsCountMethod::Decrement);
   }
 
   fn on_message(&mut self, msg: Message) -> Result<()> {
@@ -29,14 +28,14 @@ impl Handler for Server {
   }
 }
 
-pub enum WS_COUNT_METHOD {
+pub enum WsCountMethod {
   Get,
   Increment,
   Decrement,
 }
 
 pub fn get_ws_count() -> i32 {
-  let wscount = match ws_count(WS_COUNT_METHOD::Get) {
+  let wscount = match ws_count(WsCountMethod::Get) {
     Some(i) => i,
     None => -1,
   };
@@ -44,21 +43,21 @@ pub fn get_ws_count() -> i32 {
   wscount
 }
 
-fn ws_count(method: WS_COUNT_METHOD) -> Option<i32> {
+fn ws_count(method: WsCountMethod) -> Option<i32> {
   match method {
-    WS_COUNT_METHOD::Get => {
+    WsCountMethod::Get => {
       let count = unsafe {
         WS_COUNT
       };
       Some(count)
     },
-    WS_COUNT_METHOD::Increment => {
+    WsCountMethod::Increment => {
       unsafe {
         WS_COUNT += 1;
       }
       None
     },
-    WS_COUNT_METHOD::Decrement => {
+    WsCountMethod::Decrement => {
       unsafe {
         WS_COUNT -= 1;
       }
@@ -84,7 +83,7 @@ pub fn start_websocket(port: &str) {
       // increment from -1 to 0.
       // this ensures we dont lock the WSOUT mutex
       // every time a client connects
-      ws_count(WS_COUNT_METHOD::Increment);
+      ws_count(WsCountMethod::Increment);
     }
 
     Server {
