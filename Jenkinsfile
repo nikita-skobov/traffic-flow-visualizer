@@ -23,6 +23,7 @@ pipeline {
     stage('Setup') {
         steps {
             script {
+                sh 'export PATH=$PATH:/var/lib/jenkins/.cargo/bin'
                 if (env.GIT_BRANCH == "origin/master-production") {
                   echo "THIS IS A PRODUCTION BUILD"
                   DEPLOYMENT_STAGE = "production"
