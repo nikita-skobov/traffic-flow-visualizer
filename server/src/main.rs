@@ -5,6 +5,7 @@ use std::sync::Mutex;
 mod interfaces;
 mod websocket;
 mod listener;
+mod binary_message;
 
 #[macro_use]
 extern crate lazy_static;
