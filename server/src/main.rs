@@ -4,16 +4,16 @@ use std::time::Duration;
 
 
 use pnet::datalink;
-use ws::listen;
-
 
 mod interfaces;
+mod websocket;
+// mod globals;
 
 #[macro_use]
 extern crate lazy_static;
 
 lazy_static! {
-  static ref WSOUT: Mutex<Option<ws::Sender>> = Mutex::new(None);
+  pub static ref WSOUT: Mutex<Option<ws::Sender>> = Mutex::new(None);
 }
 
 
@@ -38,21 +38,12 @@ fn main() {
     let interface = interfaces::pick_interface(interface_vec);
 
     // start webserver, and websocket server
-    let handle = thread::spawn(move || {
-        listen("127.0.0.1:3012", |out| {
-            let mut wsout = WSOUT.lock().unwrap();
-            match *wsout {
-              Some(ref x) => println!("wsout already exists, skipping global mutex cloning"),
-              None => {
-                *wsout = Some(out.clone());
-              },
-            }
-            std::mem::drop(wsout);
-
-            move |msg| out.send(msg)
-        })
-        .unwrap();
+    let socket_handle = thread::spawn(|| {
+      websocket::start_websocket();
     });
+    // let server_handle = thread::spawn(|| {
+        
+    // });
 
     // start
     // let interfaces = datalink::interfaces();
