@@ -1,6 +1,8 @@
 use pnet::datalink;
 use std::io;
 
+mod interfaces;
+
 fn main() {
     // possible command line options:
     // -i --interface (enter the name of the interface)
@@ -10,6 +12,13 @@ fn main() {
     // -ao --always-on (by default, should only run the main loop if someone is connected to the websocket server, ao cancels this out)
 
 
+    let interfaces = match interfaces::show_interfaces() {
+      Some(i) => i,
+      None => {
+        println!("No interfaces found");
+        std::process::exit(1);
+      },
+    };
 
     // show user list of interfaces
     // ask user to pick one by entering the number in the console
