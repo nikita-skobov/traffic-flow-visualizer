@@ -1,3 +1,18 @@
+// Most of this file is taken from https://github.com/libpnet/libpnet/blob/master/examples/packetdump.rs
+// some modifications were made primarily:
+// - only starts packet loop if a websocket server has active connections
+// - handle_tcp_packet calls a broadcast method to broadcast packet info
+//    to websocket clients
+// below is the license from the original file:
+
+// Copyright (c) 2014, 2015 Robert Clipsham <robert@octarineparrot.com>
+//
+// Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
+// http://www.apache.org/licenses/LICENSE-2.0> or the MIT license
+// <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
+// option. This file may not be copied, modified, or distributed
+// except according to those terms.
+
 use pnet::datalink::{self, NetworkInterface};
 
 use pnet::packet::arp::ArpPacket;
