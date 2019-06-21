@@ -1,5 +1,6 @@
 use std::thread;
 use std::sync::Mutex;
+use std::time::Duration;
 
 
 use pnet::datalink;
@@ -46,6 +47,7 @@ fn main() {
                 *wsout = Some(out.clone());
               },
             }
+            std::mem::drop(wsout);
 
             move |msg| out.send(msg)
         })
