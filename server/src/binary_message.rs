@@ -12,11 +12,11 @@ pub fn make_message(
     // indicates to client this is an ipv6 external ip
   }
 
-  if is_received {
+  if !is_received {
     meta_byte |= 0b0000_0001; // set LSB.
     // indicates to client this packet originated
-    // externally and transmitted to us, rather than
-    // being originated by us and transmitted to the external ip.
+    // by us and transmitted to external ip,
+    // rather than being transmitted from the external ip to us.
   }
 
   let upper_length_byte = (length >> 8) as u8;
@@ -65,5 +65,35 @@ mod tests {
     let my_message = super::make_message(false, false, &[0], length);
     assert_eq!(my_message[1], 5);
     assert_eq!(my_message[2], 120);
+  }
+
+  #[test]
+  fn meta_byte_works() {
+    let is_ipv4 = true;
+    let is_received = true;
+    let my_message = super::make_message(is_ipv4, is_received, &[0], 0);
+    
+    // is_ipv4 affects 2nd LSB, is_received affects LSB.
+    // if ipv4 false, 2nd LSB is 1,
+    // if received false, LSB is 1
+    // expected: 0000
+    
+    assert_eq!(my_message[0], 0);
+
+    let is_ipv4 = false;
+    let my_message = super::make_message(is_ipv4, is_received, &[0], 0);
+    // expected: 0010
+    assert_eq!(my_message[0], 2);
+
+    let is_received = false;
+    let my_message = super::make_message(is_ipv4, is_received, &[0], 0);
+    // expected: 0011
+    assert_eq!(my_message[0], 3);
+
+    let is_received = false;
+    let is_ipv4 = true;
+    let my_message = super::make_message(is_ipv4, is_received, &[0], 0);
+    // expected: 0001
+    assert_eq!(my_message[0], 1);
   }
 }
