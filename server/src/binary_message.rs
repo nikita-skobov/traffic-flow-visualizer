@@ -19,6 +19,11 @@ pub fn make_message(
     // rather than being transmitted from the external ip to us.
   }
 
+  // length is the length (in bytes) of the packet.
+  // it can be greater than 255, so we must represent it as u16
+  // tcp max packet size is 65535 bytes which is max u16
+  // however most packets dont reach that size, but it is common
+  // to see packet sizes of 500 - 1000 bytes.
   let upper_length_byte = (length >> 8) as u8;
   let lower_length_byte = length as u8;
 
