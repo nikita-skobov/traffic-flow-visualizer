@@ -16,13 +16,11 @@ lazy_static! {
 
 fn main() {
     let default_websocket_port = "3012";
-    let default_delay: Option<i32> = None;
     let default_always_on = false;
     // possible command line options:
     // -i --interface (enter the name of the interface)
     // -wp --websocket-port (port of websocket)
     // -sp --static-port (port of static web server)
-    // -d --delay (in milliseconds, how much to delay the main loop by. to prevent too much cpu usage)
     // -ao --always-on (by default, should only run the main loop if someone is connected to the websocket server, ao cancels this out)
 
     // show user list of interfaces
