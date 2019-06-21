@@ -71,7 +71,7 @@ pipeline {
 
     stage('Server Test') {
       steps {
-        sh 'cd server/ && cargo test'
+        sh 'cd server/ && cargo test --target=armv7-unknown-linux-gnueabihf'
         script {
           SERVER_TEST_END = "${currentBuild.duration}"
         }
