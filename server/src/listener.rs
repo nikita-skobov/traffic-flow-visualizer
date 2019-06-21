@@ -39,17 +39,17 @@ fn handle_udp_packet(interface_name: &str, ips: &Vec<IpNetwork>, source: IpAddr,
     let udp = UdpPacket::new(packet);
 
     if let Some(udp) = udp {
-        println!(
-            "[{}]: UDP Packet: {}:{} > {}:{}; length: {}",
-            interface_name,
-            source,
-            udp.get_source(),
-            destination,
-            udp.get_destination(),
-            udp.get_length()
-        );
+        // println!(
+        //     "[{}]: UDP Packet: {}:{} > {}:{}; length: {}",
+        //     interface_name,
+        //     source,
+        //     udp.get_source(),
+        //     destination,
+        //     udp.get_destination(),
+        //     udp.get_length()
+        // );
     } else {
-        println!("[{}]: Malformed UDP Packet", interface_name);
+        // println!("[{}]: Malformed UDP Packet", interface_name);
     }
 }
 
@@ -59,33 +59,35 @@ fn handle_icmp_packet(interface_name: &str, source: IpAddr, destination: IpAddr,
         match icmp_packet.get_icmp_type() {
             IcmpTypes::EchoReply => {
                 let echo_reply_packet = echo_reply::EchoReplyPacket::new(packet).unwrap();
-                println!(
-                    "[{}]: ICMP echo reply {} -> {} (seq={:?}, id={:?})",
-                    interface_name,
-                    source,
-                    destination,
-                    echo_reply_packet.get_sequence_number(),
-                    echo_reply_packet.get_identifier()
-                );
+                // println!(
+                //     "[{}]: ICMP echo reply {} -> {} (seq={:?}, id={:?})",
+                //     interface_name,
+                //     source,
+                //     destination,
+                //     echo_reply_packet.get_sequence_number(),
+                //     echo_reply_packet.get_identifier()
+                // );
             }
             IcmpTypes::EchoRequest => {
                 let echo_request_packet = echo_request::EchoRequestPacket::new(packet).unwrap();
-                println!(
-                    "[{}]: ICMP echo request {} -> {} (seq={:?}, id={:?})",
-                    interface_name,
-                    source,
-                    destination,
-                    echo_request_packet.get_sequence_number(),
-                    echo_request_packet.get_identifier()
-                );
+                // println!(
+                //     "[{}]: ICMP echo request {} -> {} (seq={:?}, id={:?})",
+                //     interface_name,
+                //     source,
+                //     destination,
+                //     echo_request_packet.get_sequence_number(),
+                //     echo_request_packet.get_identifier()
+                // );
             }
-            _ => println!(
-                "[{}]: ICMP packet {} -> {} (type={:?})",
-                interface_name,
-                source,
-                destination,
-                icmp_packet.get_icmp_type()
-            ),
+            _ => {
+              // println!(
+              //   "[{}]: ICMP packet {} -> {} (type={:?})",
+              //   interface_name,
+              //   source,
+              //   destination,
+              //   icmp_packet.get_icmp_type()
+              // );
+            },
         }
     } else {
         println!("[{}]: Malformed ICMP Packet", interface_name);
@@ -95,15 +97,15 @@ fn handle_icmp_packet(interface_name: &str, source: IpAddr, destination: IpAddr,
 fn handle_icmpv6_packet(interface_name: &str, source: IpAddr, destination: IpAddr, packet: &[u8]) {
     let icmpv6_packet = Icmpv6Packet::new(packet);
     if let Some(icmpv6_packet) = icmpv6_packet {
-        println!(
-            "[{}]: ICMPv6 packet {} -> {} (type={:?})",
-            interface_name,
-            source,
-            destination,
-            icmpv6_packet.get_icmpv6_type()
-        )
+        // println!(
+        //     "[{}]: ICMPv6 packet {} -> {} (type={:?})",
+        //     interface_name,
+        //     source,
+        //     destination,
+        //     icmpv6_packet.get_icmpv6_type()
+        // )
     } else {
-        println!("[{}]: Malformed ICMPv6 Packet", interface_name);
+        // println!("[{}]: Malformed ICMPv6 Packet", interface_name);
     }
 }
 
@@ -131,19 +133,19 @@ fn handle_tcp_packet(interface_name: &str, ips: &Vec<IpNetwork>, source: IpAddr,
         };
 
         websocket::broadcast(&message[..]);
-        println!(
-            "[{}]: TCP Packet: {}:{} > {}:{}; length: {}, seq: {}, flags: {}",
-            interface_name,
-            source,
-            tcp.get_source(),
-            destination,
-            tcp.get_destination(),
-            packet.len(),
-            tcp.get_sequence(),
-            tcp.get_flags()
-        );
+        // println!(
+        //     "[{}]: TCP Packet: {}:{} > {}:{}; length: {}, seq: {}, flags: {}",
+        //     interface_name,
+        //     source,
+        //     tcp.get_source(),
+        //     destination,
+        //     tcp.get_destination(),
+        //     packet.len(),
+        //     tcp.get_sequence(),
+        //     tcp.get_flags()
+        // );
     } else {
-        println!("[{}]: Malformed TCP Packet", interface_name);
+        // println!("[{}]: Malformed TCP Packet", interface_name);
     }
 }
 
@@ -168,18 +170,20 @@ fn handle_transport_protocol(
         IpNextHeaderProtocols::Icmpv6 => {
             handle_icmpv6_packet(interface_name, source, destination, packet)
         }
-        _ => println!(
-            "[{}]: Unknown {} packet: {} > {}; protocol: {:?} length: {}",
-            interface_name,
-            match source {
-                IpAddr::V4(..) => "IPv4",
-                _ => "IPv6",
-            },
-            source,
-            destination,
-            protocol,
-            packet.len()
-        ),
+        _ => {
+          // println!(
+          //   "[{}]: Unknown {} packet: {} > {}; protocol: {:?} length: {}",
+          //   interface_name,
+          //   match source {
+          //       IpAddr::V4(..) => "IPv4",
+          //       _ => "IPv6",
+          //   },
+          //   source,
+          //   destination,
+          //   protocol,
+          //   packet.len()
+          // );
+        },
     }
 }
 
@@ -195,7 +199,7 @@ fn handle_ipv4_packet(interface_name: &str, ips: &Vec<IpNetwork>, ethernet: &Eth
             header.payload(),
         );
     } else {
-        println!("[{}]: Malformed IPv4 Packet", interface_name);
+        // println!("[{}]: Malformed IPv4 Packet", interface_name);
     }
 }
 
@@ -211,24 +215,24 @@ fn handle_ipv6_packet(interface_name: &str, ips: &Vec<IpNetwork>, ethernet: &Eth
             header.payload(),
         );
     } else {
-        println!("[{}]: Malformed IPv6 Packet", interface_name);
+        // println!("[{}]: Malformed IPv6 Packet", interface_name);
     }
 }
 
 fn handle_arp_packet(interface_name: &str, ethernet: &EthernetPacket) {
     let header = ArpPacket::new(ethernet.payload());
     if let Some(header) = header {
-        println!(
-            "[{}]: ARP packet: {}({}) > {}({}); operation: {:?}",
-            interface_name,
-            ethernet.get_source(),
-            header.get_sender_proto_addr(),
-            ethernet.get_destination(),
-            header.get_target_proto_addr(),
-            header.get_operation()
-        );
+        // println!(
+        //     "[{}]: ARP packet: {}({}) > {}({}); operation: {:?}",
+        //     interface_name,
+        //     ethernet.get_source(),
+        //     header.get_sender_proto_addr(),
+        //     ethernet.get_destination(),
+        //     header.get_target_proto_addr(),
+        //     header.get_operation()
+        // );
     } else {
-        println!("[{}]: Malformed ARP Packet", interface_name);
+        // println!("[{}]: Malformed ARP Packet", interface_name);
     }
 }
 
@@ -238,14 +242,16 @@ fn handle_ethernet_frame(interface: &NetworkInterface, ips: &Vec<IpNetwork>, eth
         EtherTypes::Ipv4 => handle_ipv4_packet(interface_name, ips, ethernet),
         EtherTypes::Ipv6 => handle_ipv6_packet(interface_name, ips, ethernet),
         EtherTypes::Arp => handle_arp_packet(interface_name, ethernet),
-        _ => println!(
-            "[{}]: Unknown packet: {} > {}; ethertype: {:?} length: {}",
-            interface_name,
-            ethernet.get_source(),
-            ethernet.get_destination(),
-            ethernet.get_ethertype(),
-            ethernet.packet().len()
-        ),
+        _ => {
+          // println!(
+          //   "[{}]: Unknown packet: {} > {}; ethertype: {:?} length: {}",
+          //   interface_name,
+          //   ethernet.get_source(),
+          //   ethernet.get_destination(),
+          //   ethernet.get_ethertype(),
+          //   ethernet.packet().len()
+          // );
+        },
     }
 }
 
