@@ -7,6 +7,7 @@ use pnet::datalink;
 
 mod interfaces;
 mod websocket;
+mod listener;
 
 #[macro_use]
 extern crate lazy_static;
@@ -18,6 +19,7 @@ lazy_static! {
 
 fn main() {
     let default_websocket_port = "3012";
+    let default_delay: Option<i32> = None;
     // possible command line options:
     // -i --interface (enter the name of the interface)
     // -wp --websocket-port (port of websocket)
@@ -45,13 +47,6 @@ fn main() {
         
     // });
 
-    loop {
-    }
-
-    // start
-    // let interfaces = datalink::interfaces();
-    // println!("INTERFACE #0: {:?}", interfaces[0]);
-    // for interface in datalink::interfaces() {
-    //     println!("{}", interface.name);
-    // }
+    // begin listening
+    listener::listen_to(interface);
 }
