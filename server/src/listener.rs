@@ -32,6 +32,7 @@ use std::thread;
 use std::time::Duration;
 
 use crate::websocket;
+use crate::binary_message;
 
 fn handle_udp_packet(interface_name: &str, source: IpAddr, destination: IpAddr, packet: &[u8]) {
     let udp = UdpPacket::new(packet);
@@ -108,7 +109,20 @@ fn handle_icmpv6_packet(interface_name: &str, source: IpAddr, destination: IpAdd
 fn handle_tcp_packet(interface_name: &str, source: IpAddr, destination: IpAddr, packet: &[u8]) {
     let tcp = TcpPacket::new(packet);
     if let Some(tcp) = tcp {
-        websocket::broadcast(&destination.to_string()[..]);
+
+        // TODO: implement way to check if the destination IpAddr fits within the CIDR
+        // of the network interface ip.
+        let is_received = false;
+
+        // TODO: implement way to check which of the IpAddresses is the external one.
+        let external_ip = destination;
+
+        let message = match external_ip {
+          IpAddr::V4(ip4) => binary_message::make_message(true, is_received, &ip4.octets(), packet.len() as u16),
+          IpAddr::V6(ip6) => binary_message::make_message(false, is_received, &ip6.octets(), packet.len() as u16),
+        };
+
+        websocket::broadcast(&message[..]);
         println!(
             "[{}]: TCP Packet: {}:{} > {}:{}; length: {}, seq: {}, flags: {}",
             interface_name,

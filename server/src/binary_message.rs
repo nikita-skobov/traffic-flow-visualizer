@@ -20,7 +20,6 @@ pub fn make_message(
   }
 
   let upper_length_byte = (length >> 8) as u8;
-  // the 
   let lower_length_byte = length as u8;
 
   let mut message = vec![meta_byte, upper_length_byte, lower_length_byte];
