@@ -43,6 +43,7 @@ pipeline {
                 if (NODE_MODULES_EXISTS == 1) {
                     // 1 means it does NOT exist
                     echo "node modules does not exist. running npm install"
+                    sh 'npm install'
                 } else if (PACKAGE_WAS_CHANGED == 0) {
                     // 0 means it WAS changed
                     echo "package.json has changed. running npm install"
