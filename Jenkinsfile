@@ -2,6 +2,7 @@ pipeline {
   agent any
 
   environment {
+      PATH = "$PATH:/var/lib/jenkins/.cargo/bin"
       NODE_MODULES_EXISTS = 0
       PACKAGE_WAS_CHANGED = 0
       SRC_WAS_CHANGED = 0
@@ -23,7 +24,7 @@ pipeline {
     stage('Setup') {
         steps {
             script {
-                sh 'export PATH=$PATH:/var/lib/jenkins/.cargo/bin'
+                sh 'echo $PATH'
                 if (env.GIT_BRANCH == "origin/master-production") {
                   echo "THIS IS A PRODUCTION BUILD"
                   DEPLOYMENT_STAGE = "production"
