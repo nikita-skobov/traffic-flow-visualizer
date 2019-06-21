@@ -13,6 +13,10 @@ use pnet::packet::Packet;
 use pnet::util::MacAddr;
 
 use std::net::IpAddr;
+use std::thread;
+use std::time::Duration;
+
+use crate::websocket;
 
 fn handle_udp_packet(interface_name: &str, source: IpAddr, destination: IpAddr, packet: &[u8]) {
     let udp = UdpPacket::new(packet);
@@ -206,8 +210,25 @@ fn handle_ethernet_frame(interface: &NetworkInterface, ethernet: &EthernetPacket
     }
 }
 
-pub fn listen_to(interface: NetworkInterface) {
+pub fn listen_to(
+  interface: NetworkInterface,
+  always_on: bool,
+) {
     use pnet::datalink::Channel::Ethernet;
+
+    if !always_on {
+      // in this case, wait until a user is connected
+      // to the websocket server, and then begin the intensive network listening.
+      // otherwise, simply check if a user is connected once every 3 seconds
+      // so as to not use too much CPU.
+      loop {
+        let connected_users = websocket::get_ws_count();
+        if (connected_users > 0) {
+          break;
+        }
+        thread::sleep(Duration::from_millis(3000));
+      }
+    }
 
     // Create a channel to receive on
     let (_, mut rx) = match datalink::channel(&interface, Default::default()) {

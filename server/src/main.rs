@@ -17,6 +17,7 @@ lazy_static! {
 fn main() {
     let default_websocket_port = "3012";
     let default_delay: Option<i32> = None;
+    let default_always_on = false;
     // possible command line options:
     // -i --interface (enter the name of the interface)
     // -wp --websocket-port (port of websocket)
@@ -45,5 +46,8 @@ fn main() {
     // });
 
     // begin listening
-    listener::listen_to(interface);
+    listener::listen_to(
+      interface,
+      default_always_on,
+    );
 }
