@@ -16,8 +16,14 @@ function Connected() {
 function NotConnectedYet(props) {
   const { ws } = props
   return (
-    <div>
-      <Connecter ws={ws} />
+    <div className="container h-100">
+      <div className="row h-100">
+        <div className="col-sm-12 my-auto">
+          <div className="card card-block w-25 mx-auto">
+            <Connecter ws={ws} />
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
