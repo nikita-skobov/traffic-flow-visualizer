@@ -9,3 +9,5 @@ build = "build.rs"
 
 [dependencies]
 pnet = "0.22.0"
+lazy_static = "*"
+ws = "*"

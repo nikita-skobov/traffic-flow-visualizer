@@ -1,6 +1,20 @@
+use std::thread;
+use std::sync::Mutex;
+
+
 use pnet::datalink;
+use ws::listen;
+
 
 mod interfaces;
+
+#[macro_use]
+extern crate lazy_static;
+
+lazy_static! {
+  static ref WSOUT: Mutex<Option<ws::Sender>> = Mutex::new(None);
+}
+
 
 fn main() {
     // possible command line options:
@@ -23,6 +37,20 @@ fn main() {
     let interface = interfaces::pick_interface(interface_vec);
 
     // start webserver, and websocket server
+    let handle = thread::spawn(move || {
+        listen("127.0.0.1:3012", |out| {
+            let mut wsout = WSOUT.lock().unwrap();
+            match *wsout {
+              Some(ref x) => println!("wsout already exists, skipping global mutex cloning"),
+              None => {
+                *wsout = Some(out.clone());
+              },
+            }
+
+            move |msg| out.send(msg)
+        })
+        .unwrap();
+    });
 
     // start
     // let interfaces = datalink::interfaces();
