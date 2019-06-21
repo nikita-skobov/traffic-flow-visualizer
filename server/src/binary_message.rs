@@ -96,4 +96,33 @@ mod tests {
     // expected: 0001
     assert_eq!(my_message[0], 1);
   }
+
+  #[test]
+  fn works_with_ipv4() {
+    use std::net::Ipv4Addr;
+    let ipv4 = Ipv4Addr::new(127, 0, 0, 1);
+    let my_message = super::make_message(true, true, &ipv4.octets(), 0);
+    // expected my_message: 0, 0, 0, 127, 0, 0, 1,
+
+    assert_eq!(my_message.len(), 7);
+    assert_eq!(my_message[3], 127);
+  }
+
+  #[test]
+  fn works_with_ipv6() {
+    use std::net::Ipv6Addr;
+    let ipv6 = Ipv6Addr::new(0xff01, 9, 9, 9, 9, 9, 9, 9);
+    let my_message = super::make_message(true, true, &ipv6.octets(), 0);
+    // expected my_message: 0, 0, 0,
+    // 255, 1, 0, 9,
+    // 0, 9, 0, 9
+    // 0, 9, 0, 9
+    // 0, 9, 0, 9
+
+    assert_eq!(my_message.len(), 19);
+    assert_eq!(my_message[3], 255);
+    assert_eq!(my_message[4], 1);
+    assert_eq!(my_message[5], 0);
+    assert_eq!(my_message[6], 9);
+  }
 }
