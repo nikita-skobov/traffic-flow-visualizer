@@ -60,7 +60,7 @@ pipeline {
         }
     }
 
-    stage('Test') {
+    stage('UI Test') {
       steps {
         sh 'cd ui/ && node -v && npm -v && npm run test-CI-json'
         script {
@@ -96,7 +96,7 @@ pipeline {
 
   post {
     always {
-      sh "cd ui/ && node runReport.js --current-commit ${env.GIT_COMMIT} --stages Setup,${SETUP_END},Test,${TEST_END},Server_Test,${SERVER_TEST_END},Building,${BUILDING_END} --num-commits ${NUMBER_OF_COMMITS} --branch ${env.GIT_BRANCH} --build-start ${currentBuild.startTimeInMillis} --build-duration ${currentBuild.duration} --coverage-path coverage/clover.xml --build-status ${currentBuild.result} > ../latest.json"
+      sh "cd ui/ && node runReport.js --current-commit ${env.GIT_COMMIT} --stages Setup,${SETUP_END},UI_Test,${TEST_END},Server_Test,${SERVER_TEST_END},Building,${BUILDING_END} --num-commits ${NUMBER_OF_COMMITS} --branch ${env.GIT_BRANCH} --build-start ${currentBuild.startTimeInMillis} --build-duration ${currentBuild.duration} --coverage-path coverage/clover.xml --build-status ${currentBuild.result} > ../latest.json"
       sh "bash ./scripts/sendReport.sh --report-bucket ${REPORT_BUCKET} --project-name ${env.JOB_NAME}"
     }
     success {
