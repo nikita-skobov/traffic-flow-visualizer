@@ -7,7 +7,6 @@ use pnet::datalink;
 
 mod interfaces;
 mod websocket;
-// mod globals;
 
 #[macro_use]
 extern crate lazy_static;
@@ -18,6 +17,7 @@ lazy_static! {
 
 
 fn main() {
+    let default_websocket_port = "3012";
     // possible command line options:
     // -i --interface (enter the name of the interface)
     // -wp --websocket-port (port of websocket)
@@ -38,12 +38,15 @@ fn main() {
     let interface = interfaces::pick_interface(interface_vec);
 
     // start webserver, and websocket server
-    let socket_handle = thread::spawn(|| {
-      websocket::start_websocket();
+    let socket_handle = thread::spawn(move || {
+      websocket::start_websocket(default_websocket_port);
     });
     // let server_handle = thread::spawn(|| {
         
     // });
+
+    loop {
+    }
 
     // start
     // let interfaces = datalink::interfaces();

@@ -3,8 +3,9 @@ use std::sync::Mutex;
 
 use super::WSOUT;
 
-pub fn start_websocket() {
-  listen("127.0.0.1:3012", |out| {
+pub fn start_websocket(port: &str) {
+  let ip_and_port = format!("127.0.0.1:{}", port);
+  listen(ip_and_port, |out| {
     let mut wsout = WSOUT.lock().unwrap();
     match *wsout {
       Some(ref x) => println!("wsout already exists, skipping global mutex cloning"),
