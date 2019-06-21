@@ -33,7 +33,7 @@ export class Connector extends Component {
     return (
       <form action="#" onSubmit={this.connectionBegin}>
         <InputGroup>
-          <Input placeholder={ws} />
+          <Input defaultValue={ws} />
           <InputGroupAddon addonType="append">
             <Button>Connect</Button>
           </InputGroupAddon>
