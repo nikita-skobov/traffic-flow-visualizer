@@ -111,8 +111,6 @@ fn handle_tcp_packet(interface_name: &str, ips: &Vec<IpNetwork>, source: IpAddr,
     let tcp = TcpPacket::new(packet);
     if let Some(tcp) = tcp {
 
-        // TODO: implement way to check if the destination IpAddr fits within the CIDR
-        // of the network interface ip.
         let mut is_received = true;
         let mut external_ip = source;
         for ip in ips {
