@@ -2,13 +2,12 @@ use ws::{listen, Handler, Sender, Result, Handshake, CloseCode, Error, Message};
 use std::sync::Mutex;
 
 use super::WSOUT;
-use super::WSCOUNT;
 
 struct Server {
   out: Sender,
 }
 
-static mut WS_COUNT: i32 = 0;
+static mut WS_COUNT: i32 = -1;
 
 impl Handler for Server {
   fn on_open(&mut self, _: Handshake) -> Result<()> {
@@ -71,14 +70,22 @@ fn ws_count(method: WS_COUNT_METHOD) -> Option<i32> {
 pub fn start_websocket(port: &str) {
   let ip_and_port = format!("127.0.0.1:{}", port);
   listen(ip_and_port, |out| {
-    let mut wsout = WSOUT.lock().unwrap();
-    match *wsout {
-      Some(ref x) => println!("wsout already exists, skipping global mutex cloning"),
-      None => {
-        *wsout = Some(out.clone());
-      },
+    let wscount = get_ws_count();
+    if wscount == -1 {
+      let mut wsout = WSOUT.lock().unwrap();
+      match *wsout {
+        Some(ref x) => println!("wsout already exists, skipping global mutex cloning"),
+        None => {
+          *wsout = Some(out.clone());
+        },
+      }
+      std::mem::drop(wsout);
+
+      // increment from -1 to 0.
+      // this ensures we dont lock the WSOUT mutex
+      // every time a client connects
+      ws_count(WS_COUNT_METHOD::Increment);
     }
-    std::mem::drop(wsout);
 
     Server {
       out: out,
