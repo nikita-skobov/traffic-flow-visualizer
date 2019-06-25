@@ -7,6 +7,8 @@ import {
   Table,
 } from 'reactstrap'
 
+import SVGBar from './SVGBar'
+
 export function Bar(props) {
   const { tx, rx, ip, maxRx, maxTx } = props
 
@@ -21,28 +23,12 @@ export function Bar(props) {
   return (
     <tr>
       <td className="tdp-l bar-pad">
-        <svg width="200%" height="5">
-          <rect
-            x={rxOffset}
-            y="0"
-            width={rxPercent}
-            height="100%"
-            style={{ fill: 'red', opacity: '0.5' }}
-          />
-        </svg>
+        <SVGBar width="200%" xOffset={rxOffset} barWidth={rxPercent} />
       </td>
       <td className="tdp-l border-left" />
       <td className="tdp-c blt brt" key={ip}>{ip}</td>
       <td className="tdp-r border-right bar-pad">
-        <svg width="200%" height="5">
-          <rect
-            x="0"
-            y="0"
-            width={txPercent}
-            height="100%"
-            style={{ fill: 'red', opacity: '0.5' }}
-          />
-        </svg>
+        <SVGBar width="200%" xOffset="0" barWidth={txPercent} />
       </td>
       <td className="tdp-r" />
     </tr>
