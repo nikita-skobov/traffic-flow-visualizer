@@ -13,7 +13,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use pnet::datalink::{self, NetworkInterface};
+use pnet::datalink::{self, NetworkInterface, Config, ChannelType};
 
 use pnet::packet::arp::ArpPacket;
 use pnet::packet::ethernet::{EtherTypes, EthernetPacket, MutableEthernetPacket};
@@ -277,8 +277,22 @@ pub fn listen_to(
       }
     }
 
+    let custom_config = if cfg!(target_family = "windows") {
+      Config {
+        read_buffer_size: 32768 * 2,
+        write_buffer_size: 32768 * 2,
+        read_timeout: None, // linux only
+        write_timeout: None, // linux only
+        bpf_fd_attempts: 1000, // linux only
+        linux_fanout: None, // linux only
+        channel_type: ChannelType::Layer2,
+      }
+    } else {
+      Default::default()
+    };
+
     // Create a channel to receive on
-    let (_, mut rx) = match datalink::channel(&interface, Default::default()) {
+    let (_, mut rx) = match datalink::channel(&interface, custom_config) {
         Ok(Ethernet(tx, rx)) => (tx, rx),
         Ok(_) => panic!("packetdump: unhandled channel type: {}"),
         Err(e) => panic!("packetdump: unable to create channel: {}", e),
