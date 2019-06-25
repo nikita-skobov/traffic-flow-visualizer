@@ -22,7 +22,7 @@ function TrafficDisplay(props) {
   const ipList = []
   ips.forEach((ip) => {
     ipList.push(
-      <TDPBar ip={ip} />,
+      <TDPBar maxRx={maxRx} maxTx={maxTx} ip={ip} />,
     )
   })
 

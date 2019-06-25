@@ -21,3 +21,7 @@ html,body,#root {
 .brt {
   border-right: 3px solid #dee2e6;
 }
+.bar-pad {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
