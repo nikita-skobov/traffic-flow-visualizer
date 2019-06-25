@@ -61,6 +61,7 @@ export function connectTo(url) {
   return (dispatch) => {
     dispatch(wsBegin(wsUrl))
     const ws = new WebSocket(wsUrl)
+    ws.binaryType = 'arraybuffer'
 
 
     ws.onerror = (err) => {
