@@ -43,9 +43,9 @@ const mapStateToProps = (state) => {
   const now = new Date().getTime()
   const someInterval = 10000 // 10s
   // const ips = Object.keys(state.trafficReducer)
-  const ips = Object.keys(state.trafficReducer).filter((ip) => {
-    return state.trafficReducer[ip].lastTime >= now - someInterval
-  })
+  const ips = Object.keys(state.trafficReducer)
+    .filter(ip => state.trafficReducer[ip].lastTime >= now - someInterval)
+
   return {
     ips,
   }
