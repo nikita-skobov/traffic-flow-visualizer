@@ -1,3 +1,16 @@
 html,body,#root {
   height: 100%;
 }
+
+.tdp-l {
+  width: 45%;
+  text-align: left;
+}
+.tdp-c {
+  width: 10%;
+  text-align: center;
+}
+.tdp-r {
+  width: 45%;
+  text-align: right;
+}

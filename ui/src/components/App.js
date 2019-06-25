@@ -1,16 +1,13 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
+import TrafficDisplayPyramid from './TrafficDisplayPyramid'
 import Connecter from './Connector'
 // purposefully spelled wrong to use the default
 // export instead of the named export
 
 function Connected() {
-  return (
-    <div>
-      Connected!
-    </div>
-  )
+  return <TrafficDisplayPyramid />
 }
 
 function NotConnectedYet(props) {
