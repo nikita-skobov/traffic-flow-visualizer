@@ -24,6 +24,7 @@ export function trafficReducer(state = defaultTrafficState, action) {
 
       if (!has.call(retObj, externalIP)) {
         retObj[externalIP] = {
+          lastTime: new Date().getTime(),
           tx: {
             total: isTransmitted ? bytesInPacket : 0,
           },
@@ -32,8 +33,10 @@ export function trafficReducer(state = defaultTrafficState, action) {
           },
         }
       } else if (isTransmitted) {
+        retObj[externalIP].lastTime = new Date().getTime()
         retObj[externalIP].tx.total += bytesInPacket
       } else {
+        retObj[externalIP].lastTime = new Date().getTime()
         retObj[externalIP].rx.total += bytesInPacket
       }
 
