@@ -9,3 +9,5 @@ export function waitMilliseconds(ms) {
     }, ms)
   })
 }
+
+export const has = Object.prototype.hasOwnProperty
