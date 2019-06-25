@@ -33,7 +33,9 @@ function TrafficDisplay(props) {
         <thead>
           <tr>
             <th className="tdp-l">Received</th>
+            <th className="tdp-l" />
             <th className="tdp-c">IP</th>
+            <th className="tdp-r" />
             <th className="tdp-r">Transmitted</th>
           </tr>
         </thead>

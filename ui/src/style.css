@@ -3,14 +3,21 @@ html,body,#root {
 }
 
 .tdp-l {
-  width: 45%;
+  width: 22%;
   text-align: left;
 }
 .tdp-c {
-  width: 10%;
+  width: 12%;
   text-align: center;
 }
 .tdp-r {
-  width: 45%;
+  width: 22%;
   text-align: right;
+}
+
+.blt {
+  border-left:3px solid #dee2e6;
+}
+.brt {
+  border-right: 3px solid #dee2e6;
 }

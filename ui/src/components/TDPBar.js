@@ -13,7 +13,9 @@ export function Bar(props) {
   return (
     <tr>
       <td className="tdp-l">{rx}</td>
-      <td className="tdp-c" key={ip}>{ip}</td>
+      <td className="tdp-l border-left" />
+      <td className="tdp-c blt brt" key={ip}>{ip}</td>
+      <td className="tdp-r border-right" />
       <td className="tdp-r">{tx}</td>
     </tr>
   )

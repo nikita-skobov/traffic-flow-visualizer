@@ -77,13 +77,15 @@ export class Axis extends Component {
   }
 
   render() {
-    const { RxMax, TxMax } = this
+    const { RxMax, RxHalfMax, TxMax, TxHalfMax } = this
 
     return (
       <tr>
         <td><RxMax /></td>
+        <td><RxHalfMax /></td>
         <td />
-        <td><TxMax /></td>
+        <td style={{ textAlign: 'right' }}><TxHalfMax /></td>
+        <td style={{ textAlign: 'right' }}><TxMax /></td>
       </tr>
     )
   }
