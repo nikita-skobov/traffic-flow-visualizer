@@ -48,7 +48,7 @@ export function getExternalIP(msg) {
   const isIPV4 = !isIPV6(msg)
 
   if (isIPV4) {
-    const [, , oct1, oct2, oct3, oct4] = msg
+    const [, , , oct1, oct2, oct3, oct4] = msg
     return `${oct1}.${oct2}.${oct3}.${oct4}`
   }
 
@@ -61,7 +61,7 @@ export function getExternalIP(msg) {
   // if the message has 2001 as the first hextet, then the
   // message would have the first byte be: 32, and 2nd byte: 1
   // byteToHex(32) == '20' and byteToHex(1) == '01'
-  const [, ,
+  const [, , ,
     hex1Higher, hex1Lower,
     hex2Higher, hex2Lower,
     hex3Higher, hex3Lower,
