@@ -9,9 +9,15 @@ import {
 
 
 import TDPBar from './TDPBar'
+import TDPAxis from './TDPAxis'
 
 function TrafficDisplay(props) {
-  const { ips } = props
+  const {
+    ips,
+    maxRx,
+    maxTx,
+  } = props
+
 
   const ipList = []
   ips.forEach((ip) => {
@@ -19,6 +25,7 @@ function TrafficDisplay(props) {
       <TDPBar ip={ip} />,
     )
   })
+
 
   return (
     <div>
@@ -33,6 +40,9 @@ function TrafficDisplay(props) {
         <tbody>
           {ipList}
         </tbody>
+        <tfoot>
+          <TDPAxis maxRx={maxRx} maxTx={maxTx} />
+        </tfoot>
       </Table>
     </div>
   )
@@ -46,17 +56,40 @@ const mapStateToProps = (state) => {
   const ips = Object.keys(state.trafficReducer)
     .filter(ip => state.trafficReducer[ip].lastTime >= now - someInterval)
 
+  let maxTx = 0
+  let maxRx = 0
+
   ips.sort((a, b) => {
     const ipObjA = state.trafficReducer[a]
     const ipObjB = state.trafficReducer[b]
+
+    if (ipObjA.tx.total > maxTx) maxTx = ipObjA.tx.total
+    if (ipObjB.tx.total > maxTx) maxTx = ipObjB.tx.total
+
+    if (ipObjA.rx.total > maxRx) maxRx = ipObjA.rx.total
+    if (ipObjB.rx.total > maxRx) maxRx = ipObjB.rx.total
+
     const ipATotal = ipObjA.tx.total + ipObjA.rx.total
     const ipBTotal = ipObjB.tx.total + ipObjB.rx.total
     return (ipBTotal - ipATotal)
   })
 
+  const maxTxHasChanged = state.axisReducer.maxTx !== maxTx
+  const maxRxHasChanged = state.axisReducer.maxRx !== maxRx
+
   return {
     ips,
+    maxTx,
+    maxRx,
+    maxTxHasChanged,
+    maxRxHasChanged,
   }
 }
 
-export default connect(mapStateToProps)(TrafficDisplay)
+const mapActionsToProps = {
+  maxTxDiff: newMaxTx,
+  maxRxDiff: newMaxRx,
+  maxTxAndRxDiff: newMaxBoth,
+}
+
+export default connect(mapStateToProps, mapActionsToProps)(TrafficDisplay)
