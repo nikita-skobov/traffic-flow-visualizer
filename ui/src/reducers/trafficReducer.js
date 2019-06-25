@@ -4,7 +4,7 @@ import {
 
 import { has } from '../utilities'
 import {
-  isReceived,
+  isTransmitted,
   getLength,
   getExternalIP,
 } from '../utilities/wsMessage'
@@ -20,19 +20,19 @@ export function trafficReducer(state = defaultTrafficState, action) {
 
       const externalIP = getExternalIP(uintarr)
       const bytesInPacket = getLength(uintarr)
-      const isTransmitted = !isReceived(uintarr)
+      const packetIsTransmitted = isTransmitted(uintarr)
 
       if (!has.call(retObj, externalIP)) {
         retObj[externalIP] = {
           lastTime: new Date().getTime(),
           tx: {
-            total: isTransmitted ? bytesInPacket : 0,
+            total: packetIsTransmitted ? bytesInPacket : 0,
           },
           rx: {
-            total: isTransmitted ? 0 : bytesInPacket,
+            total: packetIsTransmitted ? 0 : bytesInPacket,
           },
         }
-      } else if (isTransmitted) {
+      } else if (packetIsTransmitted) {
         retObj[externalIP].lastTime = new Date().getTime()
         retObj[externalIP].tx.total += bytesInPacket
       } else {

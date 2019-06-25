@@ -5,11 +5,11 @@ export function isIPV6(msg) {
   return (metabyte & ipv6Bit) === ipv6Bit
 }
 
-export function isReceived(msg) {
-  const receivedBit = 0b00000001
+export function isTransmitted(msg) {
+  const transmittedBit = 0b00000001
   const [metabyte] = msg
   // eslint-disable-next-line
-  return (metabyte & receivedBit) === receivedBit
+  return (metabyte & transmittedBit) === transmittedBit
 }
 
 // this function was stolen from:
