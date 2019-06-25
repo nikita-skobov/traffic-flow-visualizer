@@ -35,7 +35,7 @@ use std::time::Duration;
 use crate::websocket;
 use crate::binary_message;
 
-fn handle_udp_packet(interface_name: &str, ips: &Vec<IpNetwork>, source: IpAddr, destination: IpAddr, packet: &[u8]) {
+fn handle_udp_packet(interface_name: &str, ips: &Vec<IpNetwork>, packet_len: usize, source: IpAddr, destination: IpAddr, packet: &[u8]) {
     let udp = UdpPacket::new(packet);
 
     if let Some(udp) = udp {
@@ -109,7 +109,7 @@ fn handle_icmpv6_packet(interface_name: &str, source: IpAddr, destination: IpAdd
     }
 }
 
-fn handle_tcp_packet(interface_name: &str, ips: &Vec<IpNetwork>, source: IpAddr, destination: IpAddr, packet: &[u8]) {
+fn handle_tcp_packet(interface_name: &str, ips: &Vec<IpNetwork>, packet_len: usize, source: IpAddr, destination: IpAddr, packet: &[u8]) {
     let tcp = TcpPacket::new(packet);
     if let Some(tcp) = tcp {
 
@@ -128,8 +128,8 @@ fn handle_tcp_packet(interface_name: &str, ips: &Vec<IpNetwork>, source: IpAddr,
         }
 
         let message = match external_ip {
-          IpAddr::V4(ip4) => binary_message::make_message(true, is_received, &ip4.octets(), packet.len() as u16),
-          IpAddr::V6(ip6) => binary_message::make_message(false, is_received, &ip6.octets(), packet.len() as u16),
+          IpAddr::V4(ip4) => binary_message::make_message(true, is_received, &ip4.octets(), packet_len as u16),
+          IpAddr::V6(ip6) => binary_message::make_message(false, is_received, &ip6.octets(), packet_len as u16),
         };
 
         websocket::broadcast(&message[..]);
@@ -152,6 +152,7 @@ fn handle_tcp_packet(interface_name: &str, ips: &Vec<IpNetwork>, source: IpAddr,
 fn handle_transport_protocol(
     interface_name: &str,
     ips: &Vec<IpNetwork>,
+    packet_len: usize,
     source: IpAddr,
     destination: IpAddr,
     protocol: IpNextHeaderProtocol,
@@ -159,10 +160,10 @@ fn handle_transport_protocol(
 ) {
     match protocol {
         IpNextHeaderProtocols::Udp => {
-            handle_udp_packet(interface_name, ips, source, destination, packet)
+            handle_udp_packet(interface_name, ips, packet_len, source, destination, packet)
         }
         IpNextHeaderProtocols::Tcp => {
-            handle_tcp_packet(interface_name, ips, source, destination, packet)
+            handle_tcp_packet(interface_name, ips, packet_len, source, destination, packet)
         }
         IpNextHeaderProtocols::Icmp => {
             handle_icmp_packet(interface_name, source, destination, packet)
@@ -187,12 +188,13 @@ fn handle_transport_protocol(
     }
 }
 
-fn handle_ipv4_packet(interface_name: &str, ips: &Vec<IpNetwork>, ethernet: &EthernetPacket) {
+fn handle_ipv4_packet(interface_name: &str, ips: &Vec<IpNetwork>, packet_len: usize, ethernet: &EthernetPacket) {
     let header = Ipv4Packet::new(ethernet.payload());
     if let Some(header) = header {
         handle_transport_protocol(
             interface_name,
             ips,
+            packet_len,
             IpAddr::V4(header.get_source()),
             IpAddr::V4(header.get_destination()),
             header.get_next_level_protocol(),
@@ -203,12 +205,13 @@ fn handle_ipv4_packet(interface_name: &str, ips: &Vec<IpNetwork>, ethernet: &Eth
     }
 }
 
-fn handle_ipv6_packet(interface_name: &str, ips: &Vec<IpNetwork>, ethernet: &EthernetPacket) {
+fn handle_ipv6_packet(interface_name: &str, ips: &Vec<IpNetwork>, packet_len: usize, ethernet: &EthernetPacket) {
     let header = Ipv6Packet::new(ethernet.payload());
     if let Some(header) = header {
         handle_transport_protocol(
             interface_name,
             ips,
+            packet_len,
             IpAddr::V6(header.get_source()),
             IpAddr::V6(header.get_destination()),
             header.get_next_header(),
@@ -236,11 +239,11 @@ fn handle_arp_packet(interface_name: &str, ethernet: &EthernetPacket) {
     }
 }
 
-fn handle_ethernet_frame(interface: &NetworkInterface, ips: &Vec<IpNetwork>, ethernet: &EthernetPacket) {
+fn handle_ethernet_frame(interface: &NetworkInterface, ips: &Vec<IpNetwork>, packet_len: usize, ethernet: &EthernetPacket) {
     let interface_name = &interface.name[..];
     match ethernet.get_ethertype() {
-        EtherTypes::Ipv4 => handle_ipv4_packet(interface_name, ips, ethernet),
-        EtherTypes::Ipv6 => handle_ipv6_packet(interface_name, ips, ethernet),
+        EtherTypes::Ipv4 => handle_ipv4_packet(interface_name, ips, packet_len, ethernet),
+        EtherTypes::Ipv6 => handle_ipv6_packet(interface_name, ips, packet_len, ethernet),
         EtherTypes::Arp => handle_arp_packet(interface_name, ethernet),
         _ => {
           // println!(
@@ -303,6 +306,8 @@ pub fn listen_to(
         let mut fake_ethernet_frame = MutableEthernetPacket::new(&mut buf[..]).unwrap();
         match rx.next() {
             Ok(packet) => {
+                let packet_len = packet.len();
+
                 if cfg!(target_os = "macos") && interface.is_up() && !interface.is_broadcast()
                     && !interface.is_loopback() && interface.is_point_to_point()
                 {
@@ -313,18 +318,18 @@ pub fn listen_to(
                         fake_ethernet_frame.set_source(MacAddr(0, 0, 0, 0, 0, 0));
                         fake_ethernet_frame.set_ethertype(EtherTypes::Ipv4);
                         fake_ethernet_frame.set_payload(&packet);
-                        handle_ethernet_frame(&interface, &interface_ips, &fake_ethernet_frame.to_immutable());
+                        handle_ethernet_frame(&interface, &interface_ips, packet_len, &fake_ethernet_frame.to_immutable());
                         continue;
                     } else if version == 6 {
                         fake_ethernet_frame.set_destination(MacAddr(0, 0, 0, 0, 0, 0));
                         fake_ethernet_frame.set_source(MacAddr(0, 0, 0, 0, 0, 0));
                         fake_ethernet_frame.set_ethertype(EtherTypes::Ipv6);
                         fake_ethernet_frame.set_payload(&packet);
-                        handle_ethernet_frame(&interface, &interface_ips, &fake_ethernet_frame.to_immutable());
+                        handle_ethernet_frame(&interface, &interface_ips, packet_len, &fake_ethernet_frame.to_immutable());
                         continue;
                     }
                 }
-                handle_ethernet_frame(&interface, &interface_ips, &EthernetPacket::new(packet).unwrap());
+                handle_ethernet_frame(&interface, &interface_ips, packet_len, &EthernetPacket::new(packet).unwrap());
             }
             Err(e) => panic!("packetdump: unable to receive packet: {}", e),
         }
