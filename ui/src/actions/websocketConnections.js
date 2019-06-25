@@ -4,6 +4,8 @@ import {
   WS_CONNECTION_BEGIN,
   WS_CONNECTION_ESTABLISHED,
   WS_CONNECTION_FAILED,
+  WS_CONNECTION_CLOSED,
+  WS_MESSAGE,
 } from '../constants'
 
 export function wsBegin(url) {
@@ -11,6 +13,25 @@ export function wsBegin(url) {
     type: WS_CONNECTION_BEGIN,
     payload: {
       url,
+    },
+  }
+}
+
+export function wsClose(url) {
+  return {
+    type: WS_CONNECTION_CLOSED,
+    payload: {
+      url,
+    },
+  }
+}
+
+export function wsMessage(url, msg) {
+  return {
+    type: WS_MESSAGE,
+    payload: {
+      url,
+      msg,
     },
   }
 }
@@ -50,6 +71,14 @@ export function connectTo(url) {
 
     ws.onopen = () => {
       dispatch(wsSuccess(wsUrl, ws))
+    }
+
+    ws.onclose = () => {
+      dispatch(wsClose(wsUrl))
+    }
+
+    ws.onmessage = (msg) => {
+      dispatch(wsMessage(wsUrl, msg.data))
     }
   }
 }
