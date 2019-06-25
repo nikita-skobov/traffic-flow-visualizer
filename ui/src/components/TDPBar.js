@@ -12,9 +12,9 @@ export function Bar(props) {
 
   return (
     <tr>
-      <td className="tdp-l">{tx}</td>
+      <td className="tdp-l">{rx}</td>
       <td className="tdp-c" key={ip}>{ip}</td>
-      <td className="tdp-r">{rx}</td>
+      <td className="tdp-r">{tx}</td>
     </tr>
   )
 }
