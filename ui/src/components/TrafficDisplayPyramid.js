@@ -46,6 +46,14 @@ const mapStateToProps = (state) => {
   const ips = Object.keys(state.trafficReducer)
     .filter(ip => state.trafficReducer[ip].lastTime >= now - someInterval)
 
+  ips.sort((a, b) => {
+    const ipObjA = state.trafficReducer[a]
+    const ipObjB = state.trafficReducer[b]
+    const ipATotal = ipObjA.tx.total + ipObjA.rx.total
+    const ipBTotal = ipObjB.tx.total + ipObjB.rx.total
+    return (ipBTotal - ipATotal)
+  })
+
   return {
     ips,
   }
