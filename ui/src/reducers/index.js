@@ -1,9 +1,14 @@
 import { combineReducers } from 'redux'
 
-import { connectionReducer } from './connectionReducer'
-import { trafficReducer } from './trafficReducer'
+import { connectionReducer, defaultConnectionState } from './connectionReducer'
+import { trafficReducer, defaultTrafficState } from './trafficReducer'
 
 export default combineReducers({
   connectionReducer,
   trafficReducer,
 })
+
+export const defaultState = {
+  connectionReducer: defaultConnectionState,
+  trafficReducer: defaultTrafficState,
+}

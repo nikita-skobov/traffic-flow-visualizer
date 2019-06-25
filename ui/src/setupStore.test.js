@@ -1,7 +1,7 @@
 /* global expect it describe jest fetch afterEach beforeEach */
 import * as reduxFuncs from 'redux'
 import thunk from 'redux-thunk'
-import reducers from './reducers/index'
+import reducers, { defaultState } from './reducers/index'
 
 import * as setup from './setupStore'
 
@@ -47,8 +47,8 @@ describe('setup store function', () => {
   it('should allow the user to override the initial state by passing in the second argument', () => {
     const overrideStore = setup.setupStore(undefined, { repo: 'state' })
     const specificStore = createStore(reducers, { repo: 'state' }, applyMiddleware(thunk))
-    expect(overrideStore.getState()).toEqual({ sampleReducer: {} })
-    expect(specificStore.getState()).toEqual({ sampleReducer: {} })
+    expect(overrideStore.getState()).toEqual(defaultState)
+    expect(specificStore.getState()).toEqual(defaultState)
   })
 
   it('should allow the user to override the reducers by passing in the third argument', () => {
