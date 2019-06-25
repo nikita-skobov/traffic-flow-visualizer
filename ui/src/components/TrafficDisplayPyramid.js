@@ -74,22 +74,12 @@ const mapStateToProps = (state) => {
     return (ipBTotal - ipATotal)
   })
 
-  const maxTxHasChanged = state.axisReducer.maxTx !== maxTx
-  const maxRxHasChanged = state.axisReducer.maxRx !== maxRx
 
   return {
     ips,
     maxTx,
     maxRx,
-    maxTxHasChanged,
-    maxRxHasChanged,
   }
 }
 
-const mapActionsToProps = {
-  maxTxDiff: newMaxTx,
-  maxRxDiff: newMaxRx,
-  maxTxAndRxDiff: newMaxBoth,
-}
-
-export default connect(mapStateToProps, mapActionsToProps)(TrafficDisplay)
+export default connect(mapStateToProps)(TrafficDisplay)
