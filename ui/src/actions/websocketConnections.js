@@ -57,12 +57,10 @@ export function wsSuccess(url, ws) {
 }
 
 export function connectTo(url) {
-  console.log(`url: ${url}`)
   const wsUrl = url
   return (dispatch) => {
     dispatch(wsBegin(wsUrl))
     const ws = new WebSocket(wsUrl)
-    console.log(ws)
 
 
     ws.onerror = (err) => {
