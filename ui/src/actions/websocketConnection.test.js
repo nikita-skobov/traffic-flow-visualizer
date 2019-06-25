@@ -8,6 +8,8 @@ import {
   WS_CONNECTION_BEGIN,
   WS_CONNECTION_ESTABLISHED,
   WS_CONNECTION_FAILED,
+  WS_CONNECTION_CLOSED,
+  WS_MESSAGE,
 } from '../constants'
 
 describe('websocketConnection module', () => {
@@ -46,6 +48,32 @@ describe('websocketConnection module', () => {
         payload: expect.objectContaining({
           url,
           err: errObject,
+        }),
+      }))
+    })
+  })
+
+  describe('wsClose action', () => {
+    it(`it should disaptch ${WS_CONNECTION_CLOSED} and return a payload with a url`, () => {
+      const url = 'url'
+      expect(wsActions.wsClose(url)).toEqual(expect.objectContaining({
+        type: WS_CONNECTION_CLOSED,
+        payload: expect.objectContaining({
+          url,
+        }),
+      }))
+    })
+  })
+
+  describe('wsMessage action', () => {
+    it(`it should disaptch ${WS_MESSAGE} and return a payload with a url and a message`, () => {
+      const url = 'url'
+      const someMsg = [100]
+      expect(wsActions.wsMessage(url, someMsg)).toEqual(expect.objectContaining({
+        type: WS_MESSAGE,
+        payload: expect.objectContaining({
+          url,
+          msg: someMsg,
         }),
       }))
     })
